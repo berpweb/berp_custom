@@ -1,0 +1,147 @@
+<?xml version ="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+    
+        <record model="res.groups" id="group_invoice_menu">
+            <field name="name">Invoice Menu</field>
+        </record>
+    
+        <record id="account.menu_finance" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_invoice_menu')])]"/>
+		</record>
+        
+        <record model="res.groups" id="group_discuss_contacts_menu">
+            <field name="name">Discuss and Contacts Menu</field>
+        </record>
+        
+        <record id="mail.mail_channel_menu_root_chat" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_discuss_contacts_menu')])]"/>
+		</record>
+		
+		<record id="mail.menu_contacts" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_discuss_contacts_menu')])]"/>
+		</record>
+		
+		<record model="res.groups" id="group_attendance_menu">
+            <field name="name">Attendance Menu</field>
+        </record>
+        
+        <record id="hr_attendance.menu_hr_attendance_root" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_attendance_menu')])]"/>
+		</record>
+		
+		<record model="res.groups" id="group_quotation_menu">
+            <field name="name">Quotation Menu</field>
+        </record>
+        
+        <record id="sales_team.menu_sales_team_act" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_quotation_menu')])]"/>
+		</record>
+        
+        <record id="sale.menu_sale_quotations" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_quotation_menu')])]"/>
+		</record>
+		
+		<record id="sale.menu_sale_invoicing" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_quotation_menu')])]"/>
+		</record>
+		
+		<record id="sale.menu_sale_order_upselling" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_quotation_menu')])]"/>
+		</record>
+		
+		<record id="sale.menu_sale_order_invoice" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_quotation_menu')])]"/>
+		</record>
+		
+		<record id="base.menu_country_group" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_quotation_menu')])]"/>
+		</record>
+		
+		<record id="base.menu_config_bank_accounts" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_quotation_menu')])]"/>
+		</record>
+		
+		<record id="base.menu_partner_category_form" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_quotation_menu')])]"/>
+		</record>
+		
+		<record model="res.groups" id="group_inventory_menu">
+            <field name="name">Inventory</field>
+        </record>
+    
+        <record id="stock.stock_picking_type_menu" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_inventory_menu')])]"/>
+		</record>  
+		  
+		<record id="stock.menu_stock_warehouse_mgmt" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_inventory_menu')])]"/>
+		</record>
+		
+		<record id="stock.menu_stock_sched" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_inventory_menu')])]"/>
+		</record>
+		
+		<record id="stock.menu_report_stock_line_date" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_inventory_menu')])]"/>
+		</record>
+		
+		<record id="stock.menu_action_move_form2" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_inventory_menu')])]"/>
+		</record>
+		
+		<record id="stock.menu_wms_barcode_nomenclature_all" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_inventory_menu')])]"/>
+		</record>
+		
+		<record id="stock.menu_action_incoterm_open" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_inventory_menu')])]"/>
+		</record>
+		
+		<record model="res.groups" id="group_project_menu">
+            <field name="name">Project</field>
+        </record>
+    
+        <record id="project.menu_projects" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_project_menu')])]"/>
+		</record>  
+		
+		<record id="project.menu_action_view_task_history_cumulative" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_project_menu')])]"/>
+		</record> 
+		
+		<record model="res.groups" id="group_timesheet_menu">
+            <field name="name">Timesheet and Employees</field>
+        </record>
+    
+        <record id="hr_timesheet_sheet.menu_act_hr_timesheet_sheet_form_my_current" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_timesheet_menu')])]"/>
+		</record> 
+		
+		<record id="hr_timesheet_sheet.menu_act_hr_timesheet_sheet_form" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_timesheet_menu')])]"/>
+		</record>
+		
+		<record model="res.groups" id="group_all_settings_menu">
+            <field name="name">All app settings</field>
+        </record>
+    
+        <record id="base.menu_sale_general_settings" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_all_settings_menu')])]"/>
+		</record> 
+		
+		<record id="base.menu_project_general_settings" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_all_settings_menu')])]"/>
+		</record> 
+		
+		<record id="stock.menu_stock_general_settings" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_all_settings_menu')])]"/>
+		</record> 
+		
+		<record id="purchase.menu_purchase_general_settings" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('dvd.group_all_settings_menu')])]"/>
+		</record> 
+		
+    </data>
+</openerp>
