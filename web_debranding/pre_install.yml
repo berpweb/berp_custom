@@ -1,0 +1,3 @@
+-
+  !python {model: ir.translation}: |
+    self.clear_caches()

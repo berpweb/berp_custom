@@ -1,0 +1,252 @@
+<?xml version ="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+    
+		<record id="view_partner_form" model="ir.ui.view">
+			<field name="name">res.partner.form</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="base.view_partner_form" />
+			<field name="arch" type="xml">
+				<field name="company_type" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+				<field name="parent_id" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+				<field name="function" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+				<field name="fax" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+				<field name="category_id" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+				<field name="lang" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+				<xpath expr="//page[@name='internal_notes']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//page[@name='sales_purchases']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+			</field>
+		</record>
+        
+  		<record id="view_partner_property_form" model="ir.ui.view">
+			<field name="name">res.partner.property.form.inherit</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="account.view_partner_property_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//page[@name='accounting']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+			</field>
+		</record>
+		
+		<record model="ir.ui.view" id="partner_view_buttons">
+            <field name="name">partner.view.buttons</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.partner_view_buttons" />
+            <field name="arch" type="xml">
+            	<xpath expr="//div[@name='button_box']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+            </field>
+        </record>
+        
+        <record id="view_order_form" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form" />
+            <field name="arch" type="xml">
+            	<field name="validity_date" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+				<field name="payment_term_id" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+				<xpath expr="//group[@name='technical']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//group[@name='sale_pay']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//button[@name='action_quotation_send'][1]" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//button[@name='action_quotation_send'][2]" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='order_line']/form//label[@for='qty_invoiced']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='order_line']/form//field[@name='qty_invoiced']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='order_line']/form//label[@for='customer_lead']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='order_line']/form//field[@name='customer_lead']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='order_line']/form//field[@name='customer_lead']/.." position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='order_line']/form//label[@for='invoice_lines']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='order_line']/form//field[@name='invoice_lines']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='order_line']/tree//field[@name='qty_invoiced']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//button[@name='%(sale.action_view_sale_advance_payment_inv)d'][1]" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//button[@name='%(sale.action_view_sale_advance_payment_inv)d'][2]" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+            </field>
+        </record>
+        
+        <record id="view_order_tree" model="ir.ui.view">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                    <field name="invoice_status" position="attributes">
+						<attribute name="invisible">1</attribute>
+					</field>
+            </field>
+        </record>
+        
+        <record id="sale.action_orders" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form</field>
+        </record>
+        
+        <record id="view_order_form_inherit_sale_stock" model="ir.ui.view">
+            <field name="name">sale.order.form.sale.stock</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_stock.view_order_form_inherit_sale_stock"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//group[@name='sale_shipping']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+            </field>
+        </record>
+        
+        <record id="product_normal_form_view" model="ir.ui.view">
+            <field name="name">product.product.form</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <field name="barcode" position="attributes">
+					<attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
+        
+        <record id="view_product_supplier_inherit" model="ir.ui.view">
+            <field name="name">product.template.supplier.form.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="purchase.view_product_supplier_inherit"/>
+            <field name="arch" type="xml">
+            	<field name="purchase_method" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="product_template_form_view_invoice_policy">
+            <field name="name">product.template.invoice.policy</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="sale.product_template_form_view_invoice_policy"/>
+            <field name="arch" type="xml">
+               <field name="invoice_policy" position="attributes">
+					<attribute name="invisible">1</attribute>
+               </field>
+            </field>
+        </record>
+        
+        <record id="view_template_property_form" model="ir.ui.view">
+            <field name="name">product.template.stock.property.form.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.view_template_property_form"/>
+            <field name="arch" type="xml">
+             	<group name="stock_property" position="attributes">
+					<attribute name="invisible">1</attribute>
+             	</group>
+            </field>
+        </record>
+		
+		<record id="product_template_form_view_test" model="ir.ui.view">
+            <field name="name">product.template.common.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//notebook/page[@name='sales']" position="attributes">
+					<attribute name="invisible">1</attribute>
+             	</xpath>
+             	<xpath expr="//notebook/page[@name='notes']" position="attributes">
+					<attribute name="invisible">1</attribute>
+             	</xpath>
+            </field>
+         </record>
+         
+         <record id="product_template_form_view" model="ir.ui.view">
+            <field name="name">product.normal.form.inherit.stock</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="purchase.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <field name="property_account_creditor_price_difference" position="attributes">
+					<attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
+        
+        <record id="crm_team_salesteams_view_form" model="ir.ui.view">
+            <field name="name">crm.team.form</field>
+            <field name="model">crm.team</field>
+            <field name="inherit_id" ref="sales_team.crm_team_view_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//div[@name='options_active']" position="attributes">
+					<attribute name="invisible">1</attribute>
+             	</xpath>
+             	<xpath expr="//page[@name='more_info']" position="attributes">
+					<attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        
+        
+        <record id="view_category_property_form" model="ir.ui.view">
+            <field name="name">product.category.stock.property.form.inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="stock_account.view_category_property_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//group[@name='account_stock_property']" position="attributes">
+					<attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='property_cost_method']/.." position="attributes">
+					<attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="product_category_form_view_inherit" model="ir.ui.view">
+            <field name="name">product.category.form</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="stock.product_category_form_view_inherit" />
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='route_ids']/.." position="attributes">
+					<attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

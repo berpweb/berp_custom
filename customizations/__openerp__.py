@@ -1,5 +1,5 @@
 {
-    'name': "dvd",
+    'name': "Customizations",
 
     'summary': """
         Customizations for test""",
@@ -13,10 +13,13 @@
     'version': '0.1',
     'license': 'AGPL-3',
     'depends': [
-		'base', 'account', 'sale', 'project', 'stock', 'mail', 'hr_timesheet_sheet', 'purchase',
+		'base', 'account', 'sale', 'project', 'stock', 'mail', 'hr_timesheet_sheet', 'purchase', 'sale_stock', 'l10n_in', 'stock_account',
 	],
     'data': [
-        'views/module_name_view.xml',
+        'views/sale_view.xml',
+        'views/purchase_view.xml',
+        'views/stock_view.xml',
+        'security/customizations_security.xml',
     ],
     'installable': True,
 	'application': False,
