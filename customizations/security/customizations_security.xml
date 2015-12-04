@@ -159,5 +159,9 @@
 		    <field name="groups_id" eval="[(6, 0, [ref('group_all_settings_menu')])]"/>
 		</record>
 		
+		<record id="web_settings_dashboard.web_dashboard_menu" model="ir.ui.menu">
+		    <field name="groups_id" eval="[(6, 0, [ref('group_all_settings_menu')])]"/>
+		</record>
+		
     </data>
 </openerp>

@@ -30,3 +30,11 @@ class PurchaseOrder(models.Model):
         ('done', 'Done'),
         ('cancel', 'Cancelled')
         ])
+    
+class stock_picking(models.Model):
+    _inherit = 'stock.picking'
+
+    @api.multi
+    def do_transfer(self):
+        res = super(stock_picking, self).do_transfer()
+        return res

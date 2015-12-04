@@ -13,7 +13,8 @@
     'version': '0.1',
     'license': 'AGPL-3',
     'depends': [
-		'base', 'account', 'sale', 'project', 'stock', 'mail', 'hr_timesheet_sheet', 'purchase', 'sale_stock', 'l10n_in', 'stock_account',
+		'base', 'account', 'sale', 'project', 'stock', 'mail', 'hr_timesheet_sheet', 
+        'purchase', 'sale_stock', 'l10n_in', 'stock_account', 'web_debranding',
 	],
     'data': [
         'views/sale_view.xml',
