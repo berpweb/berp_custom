@@ -38,3 +38,17 @@ class stock_picking(models.Model):
     def do_transfer(self):
         res = super(stock_picking, self).do_transfer()
         return res
+    
+class res_partner(models.Model):
+    _inherit = 'res.partner'
+
+    @api.one
+    def _get_stat(self):
+        user_obj = self.env['res.users']
+        task_obj = self.env['project.task']
+        user = user_obj.search([('partner_id', '=', self.id)])
+        self.total = len(task_obj.search([('user_id', 'in', user.mapped('id'))]))
+        self.not_closed = len(task_obj.search([('user_id', 'in', user.mapped('id')), ('stage_id.closed', '=', False)]))
+
+    total = fields.Integer('Total', compute=_get_stat, default=0)
+    not_closed = fields.Integer('Total', compute=_get_stat, default=0)

@@ -20,6 +20,7 @@
         'views/sale_view.xml',
         'views/purchase_view.xml',
         'views/stock_view.xml',
+        'views/project_view.xml',
         'security/customizations_security.xml',
     ],
     'installable': True,
