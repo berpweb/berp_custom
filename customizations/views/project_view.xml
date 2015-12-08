@@ -58,7 +58,7 @@
 		</record>
 
 		<record id="action_partner_form_test" model="ir.actions.act_window">
-			<field name="name">User Stat's</field>
+			<field name="name">User Status</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">res.partner</field>
 			<field name="view_type">form</field>
@@ -70,8 +70,34 @@
 			<field name="act_window_id" ref="action_partner_form_test" />
 		</record>
 
-		<menuitem name="User Stats" id="menu_project_management_test"
-			parent="project.menu_project_management" action="action_partner_form_test" />
+		<menuitem name="User Status" id="menu_project_management_test"
+				parent="project.menu_project_management" action="action_partner_form_test" />
+	
+		<record id="edit_project" model="ir.ui.view">
+			<field name="name">project.project.form</field>
+			<field name="model">project.project</field>
+			<field name="inherit_id" ref="project.edit_project" />
+			<field name="arch" type="xml">
+				<xpath expr="//notebook" position="before">
+					<group colspan="2" col="2">
+						<field name="state_id" />
+					</group>
+				</xpath>
+			</field>
+		</record>
+		
+        <record id="view_employee_form" model="ir.ui.view">
+            <field name="name">hr.employee.form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form" />
+            <field name="arch" type="xml">
+            	<xpath expr="//notebook" position="before">
+					<group colspan="2" col="2">
+						<field name="state_id" />
+					</group>
+				</xpath>
+            </field>
+		</record>
 
 	</data>
 </openerp>

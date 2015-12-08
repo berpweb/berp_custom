@@ -52,3 +52,14 @@ class res_partner(models.Model):
 
     total = fields.Integer('Total', compute=_get_stat, default=0)
     not_closed = fields.Integer('Total', compute=_get_stat, default=0)
+    
+class project(models.Model):
+    _inherit = "project.project"
+    
+    state_id = fields.Many2one("res.country.state", 'Area')
+    
+class hr_employee(models.Model):
+    _inherit = "hr.employee"
+    
+    state_id = fields.Many2one("res.country.state", 'Area')
+    
