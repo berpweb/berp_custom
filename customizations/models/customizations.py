@@ -37,7 +37,30 @@ class stock_picking(models.Model):
     @api.multi
     def do_transfer(self):
         res = super(stock_picking, self).do_transfer()
+        fields_list = self.env['project.task'].fields_get()
+        defaults = self.env['project.task'].with_context({'active_ids':self._ids, 'active_id': self.id}).default_get(fields_list)
+        name = 'New Task'
+        if self.group_id:
+            order_id = self.env['sale.order'].search([('procurement_group_id', '=', self.group_id.id)])
+            if order_id:
+                name = order_id.name
+        project_id = False
+        project = self.env['project.project'].search([('state_id', '=', self.partner_id.state_id.id)])
+        if project:
+            project_id = project.id
+        user_id = False
+        user = self.env['hr.employee'].search([('state_id', '=', self.partner_id.state_id.id)])
+        if user:
+            task_data = self.env['project.task'].read_group([('stage_id.closed', '=', False)],['user_id'], ['user_id'])
+            mapped_data = dict([(task['user_id'][0], task['user_id_count']) for task in task_data])
+            if mapped_data:
+                user_id = min(mapped_data, key=mapped_data.get)
+        defaults.update({'name': name, 'project_id': project_id, 'user_id': user_id})
+        task = self.env['project.task'].create(defaults)
+        self.task_id = task.id
         return res
+    
+    task_id = fields.Many2one("project.task", 'Related Task')
     
 class res_partner(models.Model):
     _inherit = 'res.partner'
