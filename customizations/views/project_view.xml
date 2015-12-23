@@ -67,8 +67,15 @@
 				True], ['supplier', '!=', True]]
 			</field>
 			<field name="filter" eval="True" />
-			<field name="act_window_id" ref="action_partner_form_test" />
+			
 		</record>
+		
+        <record id="action_partner_form_test1" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">kanban</field>
+            <field name="act_window_id" ref="action_partner_form_test" />
+            <field name="view_id" ref="res_partner_kanban_view_test"/>
+        </record>
 
 		<menuitem name="User Status" id="menu_project_management_test"
 				parent="project.menu_project_management" action="action_partner_form_test" />
