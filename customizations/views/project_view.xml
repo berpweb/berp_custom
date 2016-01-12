@@ -105,6 +105,27 @@
 				</xpath>
             </field>
 		</record>
+		
+        <record id="view_task_form2" model="ir.ui.view">
+            <field name="name">project.task.form</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2" />
+            <field name="arch" type="xml">
+            	<field name="partner_id" position="after">
+					<field name="picking_id" />
+					<field name="partner_name" />
+					<field name="partner_street" />
+					<field name="partner_street2" />
+					<field name="partner_state" />
+					<field name="partner_zip" />
+					<field name="partner_country" />
+					<field name="partner_mobile" />
+					<field name="stage_name" />
+					<field name="delivered_to" />
+					<field name="signature" widget="image"/>
+				</field>
+            </field>
+        </record>
 
 	</data>
 </openerp>

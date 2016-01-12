@@ -51,11 +51,11 @@ class stock_picking(models.Model):
         user_id = False
         user = self.env['hr.employee'].search([('state_id', '=', self.partner_id.state_id.id)])
         if user:
-            task_data = self.env['project.task'].read_group([('stage_id.closed', '=', False)],['user_id'], ['user_id'])
+            task_data = self.env['project.task'].read_group([('stage_id.closed', '=', False), ('user_id', '!=', False)],['user_id'], ['user_id'])
             mapped_data = dict([(task['user_id'][0], task['user_id_count']) for task in task_data])
             if mapped_data:
                 user_id = min(mapped_data, key=mapped_data.get)
-        defaults.update({'name': name, 'project_id': project_id, 'user_id': user_id})
+        defaults.update({'name': name, 'project_id': project_id, 'user_id': user_id, 'picking_id': self.id, 'partner_id': self.partner_id.id})
         task = self.env['project.task'].create(defaults)
         self.task_id = task.id
         return res
@@ -86,3 +86,18 @@ class hr_employee(models.Model):
     
     state_id = fields.Many2one("res.country.state", 'Area')
     
+    
+class project_task(models.Model):
+    _inherit = "project.task"
+    
+    picking_id = fields.Many2one("stock.picking", 'Delivery Order')
+    partner_name = fields.Char(string='Customer Name', related='partner_id.name')
+    partner_street = fields.Char(string='Street', related='partner_id.street')
+    partner_street2 = fields.Char(string='Street2', related='partner_id.street2')
+    partner_state = fields.Char(string='State', related='partner_id.state_id.name')
+    partner_zip = fields.Char(string='Zip', related='partner_id.zip')
+    partner_country = fields.Char(string='Country', related='partner_id.country_id.name')
+    partner_mobile = fields.Char(string='Mobile', related='partner_id.mobile')
+    stage_name = fields.Char(string='Stage Name', related='stage_id.name')
+    delivered_to = fields.Char(string='Delivered To')
+    signature = fields.Binary(string='Signature')
