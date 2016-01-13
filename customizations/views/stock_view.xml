@@ -59,6 +59,7 @@
 			<field name="arch" type="xml">
 				<field name="group_id" position="after">
 					<field name="task_id" />
+					<field name="order_id" />
 				</field>
 			</field>
 		</record>

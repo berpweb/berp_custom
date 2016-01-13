@@ -37,30 +37,38 @@ class stock_picking(models.Model):
     @api.multi
     def do_transfer(self):
         res = super(stock_picking, self).do_transfer()
-        fields_list = self.env['project.task'].fields_get()
-        defaults = self.env['project.task'].with_context({'active_ids':self._ids, 'active_id': self.id}).default_get(fields_list)
-        name = 'New Task'
-        if self.group_id:
-            order_id = self.env['sale.order'].search([('procurement_group_id', '=', self.group_id.id)])
-            if order_id:
-                name = order_id.name
-        project_id = False
-        project = self.env['project.project'].search([('state_id', '=', self.partner_id.state_id.id)])
-        if project:
-            project_id = project.id
-        user_id = False
-        user = self.env['hr.employee'].search([('state_id', '=', self.partner_id.state_id.id)])
-        if user:
-            task_data = self.env['project.task'].read_group([('stage_id.closed', '=', False), ('user_id', '!=', False)],['user_id'], ['user_id'])
-            mapped_data = dict([(task['user_id'][0], task['user_id_count']) for task in task_data])
-            if mapped_data:
-                user_id = min(mapped_data, key=mapped_data.get)
-        defaults.update({'name': name, 'project_id': project_id, 'user_id': user_id, 'picking_id': self.id, 'partner_id': self.partner_id.id})
-        task = self.env['project.task'].create(defaults)
-        self.task_id = task.id
+        if self.order_id:
+            fields_list = self.env['project.task'].fields_get()
+            defaults = self.env['project.task'].with_context({'active_ids':self._ids, 'active_id': self.id}).default_get(fields_list)
+            name = 'New Task'
+            if self.group_id:
+                order_id = self.env['sale.order'].search([('procurement_group_id', '=', self.group_id.id)])
+                if order_id:
+                    name = order_id.name
+            project_id = False
+            project = self.env['project.project'].search([('state_id', '=', self.partner_id.state_id.id)])
+            if project:
+                project_id = project.id
+            user_id = False
+            user = self.env['hr.employee'].search([('state_id', '=', self.partner_id.state_id.id)])
+            if user:
+                task_data = self.env['project.task'].read_group([('stage_id.closed', '=', False), ('user_id', '!=', False)],['user_id'], ['user_id'])
+                mapped_data = dict([(task['user_id'][0], task['user_id_count']) for task in task_data])
+                if mapped_data:
+                    user_id = min(mapped_data, key=mapped_data.get)
+            defaults.update({'name': name, 'project_id': project_id, 'user_id': user_id, 'picking_id': self.id, 'partner_id': self.partner_id.id})
+            task = self.env['project.task'].create(defaults)
+            self.task_id = task.id
         return res
     
-    task_id = fields.Many2one("project.task", 'Related Task')
+    @api.multi
+    @api.depends('group_id')
+    def _compute_order_id(self):
+        for picking in self:
+            picking.order_id = self.env['sale.order'].search([('procurement_group_id', '=', picking.group_id.id)]) if picking.group_id else False
+
+    order_id = fields.Many2one('sale.order', compute='_compute_order_id', string='Order associated to this picking', copy=False, store=True)
+    task_id = fields.Many2one("project.task", 'Related Task', copy=False)
     
 class res_partner(models.Model):
     _inherit = 'res.partner'
@@ -90,7 +98,8 @@ class hr_employee(models.Model):
 class project_task(models.Model):
     _inherit = "project.task"
     
-    picking_id = fields.Many2one("stock.picking", 'Delivery Order')
+    picking_id = fields.Many2one("stock.picking", 'Delivery Order', copy=False)
+    picking_type = fields.Selection(string='Picking Type', related='picking_id.picking_type_code')
     partner_name = fields.Char(string='Customer Name', related='partner_id.name')
     partner_street = fields.Char(string='Street', related='partner_id.street')
     partner_street2 = fields.Char(string='Street2', related='partner_id.street2')
@@ -99,5 +108,5 @@ class project_task(models.Model):
     partner_country = fields.Char(string='Country', related='partner_id.country_id.name')
     partner_mobile = fields.Char(string='Mobile', related='partner_id.mobile')
     stage_name = fields.Char(string='Stage Name', related='stage_id.name')
-    delivered_to = fields.Char(string='Delivered To')
-    signature = fields.Binary(string='Signature')
+    delivered_to = fields.Char(string='Delivered To', copy=False)
+    signature = fields.Binary(string='Signature', copy=False)
