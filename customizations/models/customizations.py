@@ -50,13 +50,18 @@ class stock_picking(models.Model):
             if project:
                 project_id = project.id
             user_id = False
+            security_key = False
             user = self.env['hr.employee'].search([('state_id', '=', self.partner_id.state_id.id)])
             if user:
-                task_data = self.env['project.task'].read_group([('stage_id.closed', '=', False), ('user_id', '!=', False)],['user_id'], ['user_id'])
+                task_data = self.env['project.task'].read_group([('user_id', '!=', False)],['user_id'], ['user_id'])
                 mapped_data = dict([(task['user_id'][0], task['user_id_count']) for task in task_data])
                 if mapped_data:
                     user_id = min(mapped_data, key=mapped_data.get)
-            defaults.update({'name': name, 'project_id': project_id, 'user_id': user_id, 'picking_id': self.id, 'partner_id': self.partner_id.id})
+                    security_key = self.env['hr.employee'].browse(user_id).security_key
+            defaults.update({'name': name, 'project_id': project_id, 
+                             'user_id': user_id, 'picking_id': self.id, 
+                             'partner_id': self.partner_id.id,
+                             'security_key': security_key})
             task = self.env['project.task'].create(defaults)
             self.task_id = task.id
         return res
@@ -70,19 +75,33 @@ class stock_picking(models.Model):
     order_id = fields.Many2one('sale.order', compute='_compute_order_id', string='Order associated to this picking', copy=False, store=True)
     task_id = fields.Many2one("project.task", 'Related Task', copy=False)
     
-class res_partner(models.Model):
-    _inherit = 'res.partner'
+class res_users(models.Model):
+    _inherit = 'res.users'
 
     @api.one
     def _get_stat(self):
-        user_obj = self.env['res.users']
         task_obj = self.env['project.task']
-        user = user_obj.search([('partner_id', '=', self.id)])
-        self.total = len(task_obj.search([('user_id', 'in', user.mapped('id'))]))
-        self.not_closed = len(task_obj.search([('user_id', 'in', user.mapped('id')), ('stage_id.closed', '=', False)]))
+        self.total = len(task_obj.search([('user_id', '=', self.id)]))
+        self.new = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'new')]))
+        self.out_for_delivery = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'out_for_delivery')]))
+        self.delivered = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'delivered')]))
+        self.undelivered = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'undelivered')]))
+        self.undelivered_attempted = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'undelivered_attempted')]))
+        self.out_for_pickup = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'out_for_pickup')]))
+        self.picked = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'picked')]))
+        self.unpicked = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'unpicked')]))
+        self.unpicked_attempted = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'unpicked_attempted')]))
 
     total = fields.Integer('Total', compute=_get_stat, default=0)
-    not_closed = fields.Integer('Total', compute=_get_stat, default=0)
+    new = fields.Integer('New', compute=_get_stat, default=0)
+    out_for_delivery = fields.Integer('Out for Delivery', compute=_get_stat, default=0)
+    delivered = fields.Integer('Delivered', compute=_get_stat, default=0)
+    undelivered = fields.Integer('Un-Delivered', compute=_get_stat, default=0)
+    undelivered_attempted = fields.Integer('Un-Delivered Attempted', compute=_get_stat, default=0)
+    out_for_pickup = fields.Integer('Out for Pickup', compute=_get_stat, default=0)
+    picked = fields.Integer('Picked', compute=_get_stat, default=0)
+    unpicked = fields.Integer('Un-Picked', compute=_get_stat, default=0)
+    unpicked_attempted = fields.Integer('Un-Picked Attempted', compute=_get_stat, default=0)
     
 class project(models.Model):
     _inherit = "project.project"
@@ -93,11 +112,17 @@ class hr_employee(models.Model):
     _inherit = "hr.employee"
     
     state_id = fields.Many2one("res.country.state", 'Area')
-    
+    security_key = fields.Char('Security key to update')
     
 class project_task(models.Model):
     _inherit = "project.task"
     
+    @api.one
+    def _get_items_total(self):
+        if self.picking_id and self.picking_id.order_id:
+            order_id = self.picking_id.order_id
+            self.items_total = len(order_id.mapped('order_line.id'))
+
     picking_id = fields.Many2one("stock.picking", 'Delivery Order', copy=False)
     picking_type = fields.Selection(string='Picking Type', related='picking_id.picking_type_code')
     partner_name = fields.Char(string='Customer Name', related='partner_id.name')
@@ -110,3 +135,38 @@ class project_task(models.Model):
     stage_name = fields.Char(string='Stage Name', related='stage_id.name')
     delivered_to = fields.Char(string='Delivered To', copy=False)
     signature = fields.Binary(string='Signature', copy=False)
+    order_id = fields.Many2one(string='Sale Order', related='picking_id.order_id')
+    amount_total = fields.Monetary(string='Total Amount', related='picking_id.order_id.amount_total')
+    currency_id = fields.Many2one('res.currency', 'Currency', required=True, default=lambda self: self.env.user.company_id.currency_id)
+    items_total = fields.Integer('Total No of items ordered', compute=_get_items_total, default=0)
+    security_key = fields.Char('Security key to update')
+    payment_mode = fields.Selection([
+                                    ('cod', 'Cash on Delivery'),
+                                    ('online_payment', 'Online Payment'), 
+                                    ], string='Payment Mode',
+                                   copy=False, default='cod')
+    cash_collected = fields.Float(string='Cash Collected')
+    delivery_status = fields.Selection([
+                                        ('new', 'Task Created'),
+                                        ('out_for_delivery', 'Out for Delivery'), 
+                                        ('delivered', 'Delivered'),
+                                        ('undelivered', 'Un-Delivered'),
+                                        ('undelivered_attempted', 'Un-Delivered Attempted'),
+                                        ('out_for_pickup', 'Out for Pickup'), 
+                                        ('picked', 'Picked'),
+                                        ('unpicked', 'Un-Picked'),
+                                        ('unpicked_attempted', 'Un-Picked Attempted')
+                                        ], string='Delivery/Pickup Status',
+                                       copy=False, default='new')
+    delivery_location = fields.Char(string='Delivery Location')
+    received_by = fields.Char(string='Received By')
+    recipient_name = fields.Char(string='Recipient name')
+    customer_feedback = fields.Char(string='Customer Feedback', size=512)
+    
+class project_task_error(models.Model):
+    _name = "project.task.error"
+    _description = "User Error Reporting"
+    
+    name = fields.Char(string='Error Subject')
+    user_id = fields.Many2one("res.users", 'Reported User', copy=False)
+    comments = fields.Text(string='Comments')

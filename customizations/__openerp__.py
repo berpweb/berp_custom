@@ -8,7 +8,7 @@
         Customizations for test
     """,
 
-
+    'author': 'BusinessERP <businesserpweb@gmail.com>',
     'category': 'Uncategorized',
     'version': '0.1',
     'license': 'AGPL-3',

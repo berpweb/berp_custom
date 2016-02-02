@@ -11,22 +11,30 @@
 		</record>
 
 		<record model="ir.ui.view" id="res_partner_kanban_view_test">
-			<field name="name">res.partner.kanban</field>
-			<field name="model">res.partner</field>
+			<field name="name">res.users.kanban</field>
+			<field name="model">res.users</field>
 			<field name="arch" type="xml">
 				<kanban class="o_res_partner_kanban" create="false" edit="false">
 					<field name="display_name" />
 					<field name="is_company" />
 					<field name="image" />
 					<field name="total" />
-					<field name="not_closed" />
+					<field name="new" />
+					<field name="out_for_delivery" />
+					<field name="delivered" />
+					<field name="undelivered" />
+					<field name="undelivered_attempted" />
+					<field name="out_for_pickup" />
+					<field name="picked" />
+					<field name="unpicked" />
+					<field name="unpicked_attempted" />
 					<templates>
 						<t t-name="kanban-box">
 							<div class="oe_kanban_global_click o_res_partner_kanban">
 								<div class="o_kanban_image">
 									<t t-if="record.image.raw_value">
 										<img
-											t-att-src="kanban_image('res.partner', 'image_small', record.id.value)" />
+											t-att-src="kanban_image('res.users', 'image_small', record.id.value)" />
 									</t>
 									<t t-if="!record.image.raw_value">
 										<t t-if="record.is_company.raw_value === false">
@@ -39,18 +47,59 @@
 										<field name="display_name" />
 									</strong>
 									<ul>
-										<li>
-											Pending/Total:
+										<li>Total:
 											<strong class="oe_partner_heading">
-												<field name="not_closed" />
-												/
 												<field name="total" />
+											</strong>
+										</li>
+										<li>New:
+											<strong class="oe_partner_heading">
+												<field name="new" />
+											</strong>
+										</li>
+										<li>Out for Delivery:
+											<strong class="oe_partner_heading">
+												<field name="out_for_delivery" />
+											</strong>
+										</li>
+										<li>Delivered:
+											<strong class="oe_partner_heading">
+												<field name="delivered" />
+											</strong>
+										</li>
+										<li>Un-Delivered:
+											<strong class="oe_partner_heading">
+												<field name="undelivered" />
+											</strong>
+										</li>
+										<li>Un-Delivered Attempted:
+											<strong class="oe_partner_heading">
+												<field name="undelivered_attempted" />
+											</strong>
+										</li>
+										<li>Out for Pickup:
+											<strong class="oe_partner_heading">
+												<field name="out_for_pickup" />
+											</strong>
+										</li>
+										<li>Picked:
+											<strong class="oe_partner_heading">
+												<field name="picked" />
+											</strong>
+										</li>
+										<li>Un-Picked:
+											<strong class="oe_partner_heading">
+												<field name="unpicked" />
+											</strong>
+										</li>
+										<li>Un-Picked Attempted:
+											<strong class="oe_partner_heading">
+												<field name="unpicked_attempted" />
 											</strong>
 										</li>
 									</ul>
 								</div>
 							</div>
-
 						</t>
 					</templates>
 				</kanban>
@@ -60,14 +109,9 @@
 		<record id="action_partner_form_test" model="ir.actions.act_window">
 			<field name="name">User Status</field>
 			<field name="type">ir.actions.act_window</field>
-			<field name="res_model">res.partner</field>
+			<field name="res_model">res.users</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">kanban</field>
-			<field name="domain">[['is_company', '!=', True], ['customer', '!=',
-				True], ['supplier', '!=', True]]
-			</field>
-			<field name="filter" eval="True" />
-			
 		</record>
 		
         <record id="action_partner_form_test1" model="ir.actions.act_window.view">
@@ -99,8 +143,9 @@
             <field name="inherit_id" ref="hr.view_employee_form" />
             <field name="arch" type="xml">
             	<xpath expr="//notebook" position="before">
-					<group colspan="2" col="2">
+					<group col="4">
 						<field name="state_id" />
+						<field name="security_key" />
 					</group>
 				</xpath>
             </field>
@@ -114,19 +159,62 @@
             	<field name="partner_id" position="after">
 					<field name="picking_id" />
 					<field name="picking_type" />
-					<field name="partner_name" />
-					<field name="partner_street" />
-					<field name="partner_street2" />
-					<field name="partner_state" />
-					<field name="partner_zip" />
-					<field name="partner_country" />
-					<field name="partner_mobile" />
-					<field name="stage_name" />
-					<field name="delivered_to" />
+					<field name="security_key" />
+					<field name="payment_mode" />
+					<field name="currency_id" invisible="1"/>
+					<field name="amount_total" widget="monetary"/>
+					<field name="cash_collected" />
 					<field name="signature" widget="image"/>
+				</field>
+				<field name="date_last_stage_update" position="after">
+					<field name="delivery_status" />
+					<field name="delivery_location" />
+					<field name="delivered_to" />
+					<field name="received_by" />
+					<field name="recipient_name" />
+					<field name="customer_feedback" />
 				</field>
             </field>
         </record>
+        
+        <record id="project_management_error_tree_view" model="ir.ui.view">
+            <field name="name">project.task.error.view.tree</field>
+            <field name="model">project.task.error</field>
+            <field name="arch" type="xml">
+                <tree string="User Error Reporting" create="false" write="false">
+                	<field name="name" />
+                	<field name="user_id" />
+                	<field name="comments" />
+                </tree>
+            </field>
+        </record>
+        
+        <record id="project_management_error_from_view" model="ir.ui.view">
+            <field name="name">project.task.error.view.form</field>
+            <field name="model">project.task.error</field>
+            <field name="arch" type="xml">
+                <form string="User Error Reporting" create="false" write="false">
+                	<sheet>
+                		<group>
+		                	<field name="name" />
+		                	<field name="user_id" />
+		                	<field name="comments" />
+	                	</group>
+	                </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <record id="action_project_management_error" model="ir.actions.act_window">
+            <field name="name">User Error Reporting</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project.task.error</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+        
+        <menuitem name="User Error reporting" id="menu_project_management_error"
+				parent="project.menu_project_management" action="action_project_management_error" />
 
 	</data>
 </openerp>
