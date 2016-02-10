@@ -81,16 +81,17 @@ class res_users(models.Model):
     @api.one
     def _get_stat(self):
         task_obj = self.env['project.task']
-        self.total = len(task_obj.search([('user_id', '=', self.id)]))
-        self.new = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'new')]))
-        self.out_for_delivery = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'out_for_delivery')]))
-        self.delivered = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'delivered')]))
-        self.undelivered = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'undelivered')]))
-        self.undelivered_attempted = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'undelivered_attempted')]))
-        self.out_for_pickup = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'out_for_pickup')]))
-        self.picked = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'picked')]))
-        self.unpicked = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'unpicked')]))
-        self.unpicked_attempted = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'unpicked_attempted')]))
+        today = fields.Date.context_today(self)
+        self.total = len(task_obj.search([('user_id', '=', self.id), ('date_assign', '>=', today)]))
+        self.new = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'new'), ('date_assign', '>=', today)]))
+        self.out_for_delivery = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'out_for_delivery'), ('date_assign', '>=', today)]))
+        self.delivered = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'delivered'), ('date_assign', '>=', today)]))
+        self.undelivered = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'undelivered'), ('date_assign', '>=', today)]))
+        self.undelivered_attempted = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'undelivered_attempted'), ('date_assign', '>=', today)]))
+        self.out_for_pickup = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'out_for_pickup'), ('date_assign', '>=', today)]))
+        self.picked = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'picked'), ('date_assign', '>=', today)]))
+        self.unpicked = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'unpicked'), ('date_assign', '>=', today)]))
+        self.unpicked_attempted = len(task_obj.search([('user_id', '=', self.id), ('delivery_status', '=', 'unpicked_attempted'), ('date_assign', '>=', today)]))
 
     total = fields.Integer('Total', compute=_get_stat, default=0)
     new = fields.Integer('New', compute=_get_stat, default=0)
