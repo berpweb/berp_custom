@@ -58,10 +58,15 @@ class stock_picking(models.Model):
                 if mapped_data:
                     user_id = min(mapped_data, key=mapped_data.get)
                     security_key = self.env['hr.employee'].browse(user_id).security_key
+            if self.order_id.note and 'Cash On Delivery' in self.order_id.note:
+                payment_mode = 'cod'
+            else:
+                payment_mode = 'online_payment'
             defaults.update({'name': name, 'project_id': project_id, 
                              'user_id': user_id, 'picking_id': self.id, 
                              'partner_id': self.partner_id.id,
-                             'security_key': security_key})
+                             'security_key': security_key,
+                             'payment_mode': payment_mode})
             task = self.env['project.task'].create(defaults)
             self.task_id = task.id
         return res
@@ -142,8 +147,8 @@ class project_task(models.Model):
     items_total = fields.Integer('Total No of items ordered', compute=_get_items_total, default=0)
     security_key = fields.Char('Security key to update')
     payment_mode = fields.Selection([
-                                    ('cod', 'Cash on Delivery'),
-                                    ('online_payment', 'Online Payment'), 
+                                    ('cod', 'Cash On Delivery'),
+                                    ('online_payment', 'Online Payment'),
                                     ], string='Payment Mode',
                                    copy=False, default='cod')
     cash_collected = fields.Float(string='Cash Collected')
@@ -171,3 +176,8 @@ class project_task_error(models.Model):
     name = fields.Char(string='Error Subject')
     user_id = fields.Many2one("res.users", 'Reported User', copy=False)
     comments = fields.Text(string='Comments')
+    
+class CountryState(models.Model):
+    _inherit = 'res.country.state'
+    
+    zip = fields.Char('Zip Code', required=True)
